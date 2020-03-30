@@ -1,0 +1,215 @@
+﻿
+@{
+    ViewData["Title"] = "Create New User";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<ol class="breadcrumb bc-3">
+    <li>
+        <a asp-area="Administrator" asp-controller="Dashboard" asp-action="Home">
+            <i class="entypo-home"></i>
+            Dashboard
+        </a>
+    </li>
+    <li><i class="entypo-book"></i>Master Config</a></li>
+    <li class="active"><i class="entypo-user"></i>Create New User</li>
+</ol>
+
+<h1>Create New User</h1>
+
+<div class="row">
+    <form id="rootwizard-2" method="post" action="" class="form-wizard validate">
+        <div class="steps-progress">
+            <div class="progress-indicator"></div>
+        </div>
+
+        <ul>
+            <li class="active">
+                <a href="#tab2-1" data-toggle="tab"><span>1</span>Personal Info</a>
+            </li>
+            <li>
+                <a href="#tab2-2" data-toggle="tab"><span>2</span>Privileged</a>
+            </li>
+            <li>
+                <a href="#tab2-3" data-toggle="tab"><span>3</span>Register</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+
+            <div class="tab-pane active" id="tab2-1">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label" for="first_name">Firstname</label>
+                            <input class="form-control" name="first_name" id="first_name" data-validate="required" placeholder="Your Firstname" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label" for="last_name">Lastname</label>
+                            <input class="form-control" name="last_name" id="last_name" data-validate="required" placeholder="Your Lastname" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label" for="prefrred_name">Lastname</label>
+                            <input class="form-control" name="prefrred_name" id="prefrred_name" placeholder="Your Preferred Name" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label" for="birthdate">Date of Birth</label>
+                            <input class="form-control" name="birthdate" id="birthdate" data-validate="required" data-mask="date" placeholder="Pre-formatted birth date" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label" for="phone_number">Enter Phone Number</label>
+                            <input class="form-control" name="phone_number" id="phone_number" placeholder="Your Phone Number" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab2-2">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Enter Username</label>
+
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="entypo-user"></i>
+                                </div>
+
+                                <input type="text" class="form-control" name="username" id="username" data-validate="required,minlength[5]" data-message-minlength="Username must have minimum of 5 chars." placeholder="Could also be your email" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Enter E-Mail</label>
+
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="entypo-mail"></i>
+                                </div>
+
+                                <input type="text" class="form-control" name="email" id="email" data-mask="email" placeholder="E-mail" validate="required" data-message-minlength="Username must have minimum of 5 chars." />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Choose Password</label>
+
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="entypo-key"></i>
+                                </div>
+
+                                <input type="password" class="form-control" name="password" id="password" data-validate="required" placeholder="Enter strong password" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Repeat Password</label>
+
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="entypo-cw"></i>
+                                </div>
+
+                                <input type="password" class="form-control" name="password" id="password" data-validate="required,equalTo[#password]" data-message-equal-to="Passwords doesn't match." placeholder="Confirm password" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="checkbox checkbox-replace">
+                                <input type="checkbox" name="chk-rules" id="chk-rules" data-validate="required" data-message-message="You must accept rules in order to complete this registration.">
+                                <label for="chk-rules">By registering I accept terms and conditions.</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="form-group">
+                    <button type="button" id="btnRegis" name="btnRegis" class="btn btn-primary">Finish Registration</button>
+                </div>
+            </div>
+
+
+            <ul class="pager wizard">
+                <li class="previous">
+                    <a href="#"><i class="entypo-left-open"></i> Previous</a>
+                </li>
+
+                <li class="next">
+                    <a href="#">Next <i class="entypo-right-open"></i></a>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+@section Scripts{
+    <script src="~/assets/js/jquery.bootstrap.wizard.min.js"></script>
+    <script src="~/assets/js/jquery.validate.min.js"></script>
+    <script src="~/assets/js/jquery.inputmask.bundle.min.js"></script>
+
+    <script type="text/javascript">
+        var neonCreateUser = neonCreateUser || {};
+
+        ; (function ($, window, undefined) {
+            "use strict";
+            neonCreateUser.$body = $('body');
+
+            $(document).ready(function (e) {
+                $('#btnRegis').click(function (e) {
+                    setTimeout(function (e) {
+                        let opts = {
+                            "closeButton": true,
+                            "debug": false,
+                            "positionClass": rtl() || neonCreateUser.$body.hasClass('form-wizard') ? "toast-top-left" : "toast-top-right",
+                            "toastClass": "red",
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "5000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        };
+
+                        toastr.warning("This feature is still under development.", "Warning!", opts);
+                    }, 5000);
+                });
+            });
+
+        })(jQuery, window);
+        
+    </script>
+}
+

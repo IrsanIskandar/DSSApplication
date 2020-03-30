@@ -1,0 +1,102 @@
+﻿@using DssApplicationPoster.Models;
+@using System.IO;
+
+@model GetAllContent
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row" style="margin-top:20px;">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <a class="weatherwidget-io" href="https://forecast7.com/en/n6d24106d98/bekasi/" data-label_1="BEKASI" data-label_2="WEATHER" data-font="Verdana" data-icons="Climacons Animated" data-theme="weather_one">BEKASI WEATHER</a>
+        <script>
+            !function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = 'https://weatherwidget.io/js/widget.min.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'weatherwidget-io-js');
+        </script>
+    </div>
+</div>
+<div class="row" style="margin-top:20px;">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                @if (Model.ListImageContent.Count() == 0 || Model.ListImageContent == null)
+                {
+                    <div class="carousel-item active">
+                        <img class="d-block w-100" src="~/ImageDefault/Carousel-G1.png" alt="First slide">
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block w-100" src="~/ImageDefault/Carousel-G2.png" alt="Second slide">
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block w-100" src="~/ImageDefault/Carousel-G3.png" alt="Third slide">
+                    </div>
+                }
+                else
+                {
+                    int counter = 1;
+                    @foreach (var item in Model.ListImageContent)
+                    {
+                        <div id="carousel-@(counter++)" class="carousel-item">
+                            <img class="d-block w-100" src="~/ImageUploads/@item.ImageName" alt="Carousel-@item.ImageName">
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="margin-top:20px;">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        @if (Model.GetVideoContent.VideoName == null && Model.GetVideoContent.VideoPath == null)
+        {
+            <div class="embed-responsive embed-responsive-21by9">
+                <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/c1ixeO_Rvko?rel=0;&autoplay=1&mute=1&loop=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            
+        }
+        else
+        {
+            <video class="video-js embed-responsive embed-responsive-21by9" id="videoContent" preload="auto">
+                <source src="~/VideoUploads/@Model.GetVideoContent.VideoName" />
+            </video>
+        }
+    </div>
+</div>
+<div class="row" style="margin-top:20px;">
+    <div style="background-color:rgb(230, 224, 0); color:rgb(19, 138, 36)" class="col-lg-12 col-md-12 col-sm-12">
+        @if (Model.GetTextRun.TextName == null || Model.GetTextRun.TextName == "")
+        {
+            <div style="font-size:30px; font-weight:900; text-transform:uppercase;">
+                <marquee direction="" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();">pemerintah kabupaten bekasi</marquee>
+            </div>
+        }
+        else
+        {
+            <div style="font-size:30px; font-weight:900; text-transform:uppercase;">
+                <marquee direction="" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();">@Model.GetTextRun.TextName</marquee>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#carousel-1').addClass('active');
+            $('.carousel').carousel();
+
+            var myVideo = videojs('videoContent', {
+                muted: true,
+                controls: true,
+                loop: true,
+                preload: 'auto',
+                autoplay: true,
+                responsive: true,
+                fluid: true
+            });
+            player.addClass('vjs-matrix');
+        })
+    </script>
+}

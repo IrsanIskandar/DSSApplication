@@ -1,0 +1,148 @@
+﻿
+@{
+    ViewData["Title"] = "UploadImage";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<ol class="breadcrumb bc-3">
+    <li>
+        <a asp-area="Administrator" asp-controller="Dashboard" asp-action="Home">
+            <i class="entypo-home"></i>
+            Dashboard
+        </a>
+    </li>
+    <li><i class="entypo-upload-cloud"></i>Upload Content</li>
+    <li class="active"><i class="entypo-picture"></i>Upload Images</li>
+</ol>
+
+<h1>Image Upload</h1>
+<hr />
+
+<h3>
+    Drag n' Drop Images Upload
+    <br />
+    <small>Please drag and drop the image file in the box below with the format/extension <strong>(.png, .jpg, .jpeg)</strong> max file size <strong>20MB</strong>.</small>
+</h3>
+<br />
+
+<form asp-area="Administrator" asp-controller="Dashboard" asp-action="UploadImage" class="dropzone" enctype="multipart/form-data" method="post" id="dropzoneImages" name="dropzoneImages">
+    <div class="fallback">
+        <input name="fileImage" id="fileImage" type="file" required multiple />
+    </div>
+</form>
+
+<hr />
+<div class="form-group">
+    <button type="submit" id="btnUpload" name="btnUpload" class="btn btn-primary btn-block btn-login">
+        Upload Files
+        <i class="entypo-upload"></i>
+    </button>
+</div>
+
+@section Scripts {
+
+    <link rel="stylesheet" href="~/assets/js/dropzone/dropzone.css">
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            Dropzone.autoDiscover = false;
+
+            $('form[name="dropzoneImages"]').dropzone({
+                //prevents Dropzone from uploading dropped files immediately,
+                //url: 'Administrator/DashboardData/UploadImageAsync',
+                autoProcessQueue: false,
+                uploadMultiple: true,
+                parallelUploads: 100,
+                paramName: "fileImage",
+                maxFilesize: 20,
+                maxFiles: 10,
+                addRemoveLinks: true,
+                dictResponseError: 'Server not Configured',
+                acceptedFiles: ".png,.jpg,.jpeg",// use this to restrict file type
+                init: function () {
+                    var self = this;
+                    // config
+                    self.options.addRemoveLinks = true;
+                    self.options.dictRemoveFile = "Remove File";
+
+                    //New file added
+                    self.on("addedfile", function (file) {
+                        //console.log('new file added ', file);
+                        $('.dz-success-mark').hide();
+                        $('.dz-error-mark').hide();
+                    });
+
+                    // Send file starts
+                    self.on("sending", function (file) {
+                        ///console.log('upload started', file);
+                        $('.meter').show();
+                    });
+
+                    // File upload Progress
+                    self.on("totaluploadprogress", function (progress) {
+                        //console.log("progress ", progress);
+                        $('.roller').width(progress + '%');
+                    });
+
+                    self.on("queuecomplete", function (progress) {
+                        $('.meter').delay(999).slideUp(999);
+                    });
+
+                    // On removing file
+                    self.on("removedfile", function (file) {
+                        console.log(file);
+                    });
+
+                    self.on('error', function (file, response) {
+                        setTimeout(function () {
+                                let opts = {
+                                    "closeButton": true,
+                                    "debug": false,
+                                    "positionClass": rtl() || neonLogin.$body.hasClass('login-container') ? "toast-top-left" : "toast-top-right",
+                                    "toastClass": "red",
+                                    "onclick": null,
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "timeOut": "5000",
+                                    "extendedTimeOut": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut"
+                                };
+
+                                toastr.error(err, "An error occurred.\n" + response.responseText, opts);
+                            }, 3000);
+                    });
+
+                    $('button[name="btnUpload"]').on("click", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // Validate form here if needed
+
+                        if (self.getQueuedFiles().length > 0) {
+                            self.processQueue();
+
+
+                        } else {
+                            self.uploadFiles([]);
+                            $('form[name="dropzoneImages"]').submit();
+                        }
+
+                    });
+
+                    self.on("successmultiple", function (file, response) {
+                        // Gets triggered when the files have successfully been sent.
+                        // Redirect user or notify of success.
+                        self.removeAllFiles(file);
+                    });
+                }
+            });
+        });
+
+    </script>
+
+}
+

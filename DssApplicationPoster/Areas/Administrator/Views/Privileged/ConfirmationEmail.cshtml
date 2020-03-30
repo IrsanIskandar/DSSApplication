@@ -1,0 +1,133 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Dashboard Register" />
+    <meta name="author" content="" />
+
+    <title>Confirmation Email</title>
+
+    <link rel="stylesheet" href="~/assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css">
+    <link rel="stylesheet" href="~/assets/css/font-icons/entypo/css/entypo.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="~/assets/css/neon-core.css">
+    <link rel="stylesheet" href="~/assets/css/neon-theme.css">
+    <link rel="stylesheet" href="~/assets/css/neon-forms.css">
+    <link rel="stylesheet" href="~/assets/css/custom.css">
+
+    <script src="~/assets/js/jquery-1.11.0.min.js"></script>
+</head>
+<body class="page-body login-page login-form-fall" data-url="">
+    <!-- This is needed when you send requests via Ajax -->
+    <script type="text/javascript">
+        var baseurl = '';
+    </script>
+
+    <div class="login-container">
+
+        <div class="login-header login-caret">
+
+            <div class="login-content">
+
+                <a href="#" class="logo">
+                    <img src="~/assets/images/logo@2x.png" width="120" alt="" />
+                </a>
+
+                <p class="description">Create an account, it's free and takes few moments only!</p>
+
+            </div>
+
+        </div>
+
+        <div class="login-form">
+
+            <div class="login-content">
+
+                <div class="form-steps">
+
+                    <div class="step current" id="step-1">
+                        <div class="form-register-success">
+                            <i class="entypo-check"></i>
+                            <h3>The account has not been verified.</h3>
+                            <p>
+                                Your account still hasn't been verified. We have sent a confirmation email to activate your account.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="login-bottom-links">
+
+                    <a href="@Url.Action("Login", "Privileged")" class="link">
+                        <i class="entypo-lock"></i>
+                        Return to Login Page
+                    </a>
+
+                    <br />
+
+                    <a href="javascript:void(0);">DSS</a> Dashboard - <a href="javascript:void(0);">Privacy Policy</a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        /**
+         *	Neon Register Script
+         *
+         *	Developed by Arlind Nushi - www.laborator.co
+         */
+
+        //var neonRegister = neonRegister || {};
+
+        ; (function ($, window, undefined) {
+            "use strict";
+
+            $(document).ready(function () {
+                setTimeout(function () {
+                    // // Now we show the success message
+                    $(".form-register-success").slideDown('normal');
+                    // Hide the description title
+                    //$(".login-page .login-header .description").slideUp();
+
+                    //// Hide the register form (steps)
+                    //neonRegister.$steps.slideUp('normal', function()
+                    //{
+                    // // Remove loging-in state
+                    // $(".login-page").removeClass('logging-in');
+
+                    // // Now we show the success message
+                    // $(".form-register-success").slideDown('normal');
+
+                    // // You can use the data returned from response variable
+                    //});
+
+                }, 1000);
+            });
+
+        })(jQuery, window);
+    </script>
+
+    <!-- Bottom Scripts -->
+    <script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
+    <script src="~/assets/js/bootstrap.js"></script>
+    <script src="~/assets/js/jquery.validate.min.js"></script>
+    <script src="~/assets/js/neon-register.js"></script>
+</body>
+</html>

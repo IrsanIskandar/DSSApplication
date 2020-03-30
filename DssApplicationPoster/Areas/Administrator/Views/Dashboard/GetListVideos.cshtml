@@ -1,0 +1,272 @@
+﻿@using DssApplicationPoster.Areas.Administrator.Models
+@model IEnumerable<VideoList>
+
+@{
+    ViewData["Title"] = "List Of Video";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .modal-backdrop {
+        z-index: 1040 !important;
+    }
+
+    .modal-dialog {
+        z-index: 1100 !important;
+    }
+</style>
+
+<ol class="breadcrumb bc-3">
+    <li>
+        <a asp-area="Administrator" asp-controller="Dashboard" asp-action="Home">
+            <i class="entypo-home"></i>
+            Dashboard
+        </a>
+    </li>
+    <li><i class="entypo-book"></i>Master Config</a></li>
+    <li class="active"><i class="entypo-list"></i>List Of Video</li>
+</ol>
+
+<h1>List Of Video</h1>
+
+<div class="col-md-12">
+    <table class="table table-bordered table-striped datatable" id="table-video">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Video Name</th>
+                <th>Video Size</th>
+                <th>Video Path</th>
+                <th>Is Show</th>
+                <th>Created By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count() == 0)
+            {
+                <tr>
+                    <td colspan="6">
+                        <p style="text-align:center; text-transform:uppercase;">No records found</p>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.NumberVideo</td>
+                        <td>@item.VideoName</td>
+                        <td>@item.VideoSize byte</td>
+                        <td>@item.VideoPath</td>
+                        <td>@item.IsShow</td>
+                        <td>@item.CreateBy</td>
+                        <td>
+                            <button data-toggle="modal" data-IdVid="@item.NumberVideo" data-VidName="@item.VideoName" data-VidPath="@item.VideoPath" data-VidIsShow="@item.IsShow" data-target="#modal-video" class="btn btn-info btn-sm btn-icon icon-left open-editVid">
+                                <i class="entypo-pencil"></i>
+                                Edit
+                            </button>
+
+                            <script type="text/javascript">
+                                $(document).on("click", ".open-editVid", function () {
+                                    var idVid = $(this).data('idvid');
+                                    var srcVid = $(this).data('vidname');
+                                    var videoName = $(this).data('vidname');
+                                    var videoPath = $(this).data('vidpath');
+                                    var videoDis = $(this).data('vidissihow');
+
+                                    $(".modal-body #numVidlbl").val(idVid);
+                                    $(".modal-body video").attr('id', srcVid.replace('.', ''));
+                                    $(".modal-body video").attr('src', window.location.origin + '/VideoUploads/' + srcVid);
+                                    $(".modal-body source").attr('src', window.location.origin + '/VideoUploads/' + srcVid);
+                                    $(".modal-body video").load();
+                                    videojs(srcVid.replace('.', ''), {
+                                        controls: true,
+                                        preload: 'auto',
+                                        autoplay: false,
+                                        responsive: true,
+                                        fluid: true
+                                    });
+                                    $(".modal-body #lblVidName").text(videoName);
+                                    $(".modal-body #lblVidPath").text(videoPath);
+                                    $(".modal-body #lblVidDis").text(videoDis);
+                                });
+                            </script>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Popup -->
+<div class="modal fade custom-width" id="modal-video" tabindex="-1" role="dialog" aria-labelledby="videoEdit" aria-hidden="true">
+    <div class="modal-dialog" style="width: 70%;" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="videoEdit">Edit Video To Live Display</h5>
+                <button id="mdlVidClose" type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom:10px;">
+                        <video class="video-js embed-responsive embed-responsive-21by9" height="350" width="950" controls preload="auto">
+                            <source />
+                        </video>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label">Video Name :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <label id="lblVidName" class="control-label"></label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label">Video Path :</label>
+                    </div>
+                    <div style="word-wrap:break-word;" class="col-md-9">
+                        <label style="word-wrap:break-word;" id="lblVidPath" class="control-label"></label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label">Video Display :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <label id="lblVidDis" class="control-label"></label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label" for="drpIsVidDisplay">Edit To Live Display :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <form method="post" role="form" name="formEditVideo" id="formEditVideo">
+                            @Html.AntiForgeryToken()
+
+                            <input style="display:none;" id="numVidlbl" name="numVidlbl" readonly="readonly" />
+                            <div class="form-group">
+
+                                @(Html.DropDownList("drpIsVidDisplay", new List<SelectListItem> {
+                                    new SelectListItem()
+                                    {
+                                        Text = "Not Displayed",
+                                        Value = "0"
+                                    },
+                                    new SelectListItem()
+                                    {
+                                        Text = "Live Displayed",
+                                        Value = "2"
+                                    }
+                                }, "-- Choose One --", new { @id = "drpIsVidDisplay", @name = "drpIsVidDisplay", @class = "form-control" }))
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="SaveDataVideo(this)" data-dismiss="modal">Save Changes</button>
+                <button id="btnVidCancel" type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <link href="~/lib/datatables/datatable.min.css" rel="stylesheet" />
+    <link href="~/lib/videojs/video-js.css" rel="stylesheet" />
+
+    <script src="~/lib/videojs/videojs-ie8.min.js"></script>
+    <script src="https://vjs.zencdn.net/7.5.5/video.js"></script>
+    <script src="~/lib/datatables/pdfmake.min.js"></script>
+    <script src="~/lib/datatables/vfs_font.min.js"></script>
+    <script src="~/lib/datatables/datatables.min.js"></script>
+
+
+    <script type="text/javascript">
+        function SaveDataVideo(sender) {
+            $.ajax({
+                url: '@Url.Action("LiveDisplayVideo", "Dashboard")',
+                method: 'POST',
+                data: {
+                    drpIsVidDisplay: $('#drpIsVidDisplay').val(),
+                    numVidlbl: $('input[name="numVidlbl"]').val(),
+                },
+                success: function (e) {
+                    let getValImgDis = $('#drpIsVidDisplay').val();
+                    let getValImgId = $('input[name="numVidlbl"]').val();
+
+                    if (getValImgDis !== '' || getValImgId !== '') {
+                        setTimeout(function () {
+                            let opts = {
+                                "closeButton": true,
+                                "debug": false,
+                                "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
+                                "toastClass": "green",
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "5000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            };
+
+                            toastr.success("records updated.", "Successfully!", opts);
+                        }, 3000);
+
+                        document.getElementById('drpIsVidDisplay').selectedIndex = "0";
+                        $(this).modal('hide');
+                    }
+                },
+                error: function (e) {
+                    setTimeout(function () {
+                        let optsErr = {
+                            "closeButton": true,
+                            "debug": false,
+                            "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
+                            "toastClass": "red",
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "5000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        };
+                        toastr.error("records error.\n" + e.responseText, "Error Data",  optsErr);
+                    }, 3000);
+                    document.getElementById('drpIsVidDisplay').selectedIndex = "0";
+                }
+            });
+        };
+
+        jQuery(window).ready(function (e) {
+            $('#modal-video').appendTo('body');
+            $('select#btnVidCancel').prop('selectedIndex', 0);
+            $('select#mdlVidClose').prop('selectedIndex', 0);
+
+            $('#table-video').DataTable();
+        });
+    </script>
+}

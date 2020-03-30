@@ -1,0 +1,258 @@
+﻿@using DssApplicationPoster.Areas.Administrator.Models
+@model IEnumerable<ImageList>
+
+
+@{
+    ViewData["Title"] = "List Of Image";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .modal-backdrop {
+        z-index: 1040 !important;
+    }
+
+    .modal-dialog {
+        z-index: 1100 !important;
+    }
+</style>
+
+<ol class="breadcrumb bc-3">
+    <li>
+        <a asp-area="Administrator" asp-controller="Dashboard" asp-action="Home">
+            <i class="entypo-home"></i>
+            Dashboard
+        </a>
+    </li>
+    <li><i class="entypo-book"></i>Master Config</a></li>
+    <li class="active"><i class="entypo-list"></i>List Of Image</li>
+</ol>
+
+<h1>List Of Image</h1>
+
+<div class="col-md-12">
+    <table class="table table-bordered table-striped datatable" id="table-Image">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Image Name</th>
+                <th>Image Size</th>
+                <th>Image Path</th>
+                <th>Is Show</th>
+                <th>Created By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count() == 0)
+            {
+                <tr>
+                    <td colspan="6">
+                        <p style="text-align:center; text-transform:uppercase;">No records found</p>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.NumberImage</td>
+                        <td>@item.ImageName</td>
+                        <td>@item.ImageSize byte</td>
+                        <td>@item.ImagePath</td>
+                        <td>@item.IsShow</td>
+                        <td>@item.CreateBy</td>
+                        <td>
+                            <button data-toggle="modal" data-Id="@item.NumberImage" data-ImgName="@item.ImageName" data-ImgPath="@item.ImagePath" data-ImgIsShow="@item.IsShow" data-target="#modal-image" class="btn btn-info btn-sm btn-icon icon-left open-edit">
+                                <i class="entypo-pencil"></i>
+                                Edit
+                            </button>
+
+                            <script type="text/javascript">
+                                $(document).on("click", ".open-edit", function () {
+                                    var idImg = $(this).data('id');
+                                    var picImg = $(this).data('imgname');
+                                    var imageName = $(this).data('imgname');
+                                    var imagePath = $(this).data('imgpath');
+                                    var imageDis = $(this).data('imgisshow');
+
+                                    $(".modal-body #numImglbl").val(idImg);
+                                    $(".modal-body #picDis").attr('src', window.location.origin + '/ImageUploads/' + picImg);
+                                    $(".modal-body #lblImgName").text(imageName);
+                                    $(".modal-body #lblImgPath").text(imagePath);
+                                    $(".modal-body #lblImgDis").text(imageDis);
+                                });
+                            </script>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Popup -->
+<div class="modal fade custom-width" id="modal-image" tabindex="-1" role="dialog" aria-labelledby="imageEdit" aria-hidden="true">
+    <div class="modal-dialog" style="width: 70%;" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageEdit">Detail Image Display</h5>
+                <button id="mdlImgClose" type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row" style="margin-bottom:10px;">
+                    <div class="col-md-12">
+                        <img class="img-responsive" height="250" id="picDis" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label">Image Name :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <label id="lblImgName" class="control-label"></label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label">Image Path :</label>
+                    </div>
+                    <div style="word-wrap:break-word;" class="col-md-9">
+                        <label style="word-wrap:break-word;" id="lblImgPath" class="control-label"></label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label">Image Display :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <label id="lblImgDis" class="control-label"></label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label" for="exampleInputEmail1">Edit To Live Display :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <form method="post" role="form" name="formEditImage" id="formEditImage">
+                            @Html.AntiForgeryToken()
+
+                            <input style="display:none;" id="numImglbl" name="numImglbl" readonly="readonly" />
+                            <div class="form-group">
+
+                                @(Html.DropDownList("drpIsDisplay", new List<SelectListItem> {
+                                    new SelectListItem()
+                                    {
+                                        Text = "Not Displayed",
+                                        Value = "0"
+                                    },
+                                    new SelectListItem()
+                                    {
+                                        Text = "Live Displayed",
+                                        Value = "2"
+                                    }
+                                }, "-- Choose One --", new { @id = "drpIsDisplay", @name = "drpIsDisplay", @class = "form-control" }))
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="SaveData(this)" data-dismiss="modal">Save Changes</button>
+                <button id="btnImgCancel" type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="~/lib/datatables/datatable.min.css" rel="stylesheet" />
+
+    <script src="~/lib/datatables/pdfmake.min.js"></script>
+    <script src="~/lib/datatables/vfs_font.min.js"></script>
+    <script src="~/lib/datatables/datatables.min.js"></script>
+
+    <script type="text/javascript">
+        function SaveData(sender) {
+            $.ajax({
+                url: '@Url.Action("LiveDisplayImage", "Dashboard")',
+                method: 'POST',
+                data: {
+                    drpIsDisplay: $('#drpIsDisplay').val(),
+                    numImglbl: $('input[name="numImglbl"]').val(),
+                },
+                success: function (e) {
+                    setTimeout(function () {
+                        let opts = {
+                            "closeButton": true,
+                            "debug": false,
+                            "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
+                            "toastClass": "green",
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "5000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        };
+
+                        toastr.success("records updated.", "Successfully!", opts);
+                    }, 3000);
+
+                    document.getElementById('drpIsDisplay').selectedIndex = "0";
+                    $(this).modal('hide');
+                },
+                error: function (e) {
+                    setTimeout(function () {
+                        let optsErr = {
+                            "closeButton": true,
+                            "debug": false,
+                            "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
+                            "toastClass": "red",
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "5000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        };
+                        toastr.error("records error.\n" + e.responseText, "Error Data",  optsErr);
+                    }, 3000);
+
+                    document.getElementById('drpIsDisplay').selectedIndex = "0";
+                }
+            });
+        };
+
+        jQuery(window).ready(function (e) {
+            $('#modal-image').appendTo('body');
+            $('#table-Image').DataTable();
+
+            $('#btnImgCancel').on('click', '.modal-footer', function () {
+                $("select#btnImgCancel").val('');
+            });
+
+            $('#mdlImgClose').on('click', '.modal-header', function () {
+                $("select#mdlImgClose").val('');
+            });
+        });
+    </script>
+}
+

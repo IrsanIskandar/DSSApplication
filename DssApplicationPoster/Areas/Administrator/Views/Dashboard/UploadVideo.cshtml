@@ -1,0 +1,155 @@
+﻿@using DssApplicationPoster.Areas.Administrator.Models
+@model IEnumerable<VideoList>
+
+@{
+    ViewData["Title"] = "UploadVideo";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<ol class="breadcrumb bc-3">
+    <li>
+        <a asp-area="Administrator" asp-controller="Dashboard" asp-action="Home">
+            <i class="entypo-home"></i>
+            Dashboard
+        </a>
+    </li>
+    <li><i class="entypo-upload-cloud"></i>Upload Content</li>
+    <li class="active"><i class="entypo-video"></i>Upload Videos</li>
+</ol>
+
+<h1>Video Upload</h1>
+
+<hr />
+
+<h3>
+    Drag n' Drop Video Uploads
+    <br />
+    <small>
+        Please drag and drop the video file in the box below with the format/extension <strong>(.mp4, .mkv, .mov, .webm)</strong> max file size <strong>6GB</strong>.
+    </small>
+</h3>
+
+<br />
+
+<form asp-area="Administrator" asp-controller="Dashboard" asp-action="UploadVideo" enctype="multipart/form-data" method="post" class="dropzone" id="dropzoneVideos" name="dropzoneVideos">
+    <div class="fallback">
+        <input name="fileVideo" type="file" />
+    </div>
+</form>
+
+<hr />
+<div class="form-group">
+    <button type="submit" id="btnUploadVideo" name="btnUploadVideo" class="btn btn-primary btn-block btn-login">
+        Upload Files
+        <i class="entypo-upload"></i>
+    </button>
+</div>
+
+<div id="dze_info" style="display:none;">
+    <br />
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Dropzone Uploaded Files Info</div>
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th width="40%">File name</th>
+                    <th width="15%">Size</th>
+                    <th width="15%">Type</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="~/assets/js/dropzone/dropzone.css">
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            Dropzone.autoDiscover = false;
+
+            $('form[name="dropzoneVideos"]').dropzone({
+                //prevents Dropzone from uploading dropped files immediately,
+                //url: 'Administrators/DashboardData/UploadImageAsync',
+                autoProcessQueue: false,
+                uploadMultiple: true,
+                parallelUploads: 10,
+                paramName: "fileVideo",
+                maxFilesize: 6442450944,
+                maxFiles: 10,
+                addRemoveLinks: true,
+                dictResponseError: 'Server not Configured',
+                acceptedFiles: ".mp4,.mov,.mkv,.webm",// use this to restrict file type
+                init: function () {
+                    var self = this;
+                    // config
+                    self.options.addRemoveLinks = true;
+                    self.options.dictRemoveFile = "Remove File";
+
+                    //New file added
+                    self.on("addedfile", function (file) {
+                        //console.log('new file added ', file);
+                        $('.dz-success-mark').hide();
+                        $('.dz-error-mark').hide();
+                    });
+
+                    // Send file starts
+                    self.on("sending", function (file) {
+                        ///console.log('upload started', file);
+                        $('.meter').show();
+                    });
+
+                    // File upload Progress
+                    self.on("totaluploadprogress", function (progress) {
+                        //console.log("progress ", progress);
+                        $('.roller').width(progress + '%');
+                    });
+
+                    self.on("queuecomplete", function (progress) {
+                        $('.meter').delay(999).slideUp(999);
+                    });
+
+                    // On removing file
+                    self.on("removedfile", function (file) {
+                        console.log(file);
+                    });
+
+                    $('button[name="btnUploadVideo"]').on("click", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // Validate form here if needed
+
+                        if (self.getQueuedFiles().length > 0) {
+                            self.processQueue();
+
+                        } else {
+                            self.uploadFiles([]);
+                            $('form[name="dropzoneVideos"]').submit();
+                        }
+
+                    });
+
+                    self.on("successmultiple", function (file, response) {
+                        // Gets triggered when the files have successfully been sent.
+                        // Redirect user or notify of success.
+                        self.removeAllFiles(file);
+                        $('#dze_info').slideDown();
+                    });
+                }
+            });
+        })
+    </script>
+}
+
