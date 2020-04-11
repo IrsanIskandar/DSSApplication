@@ -238,5 +238,269 @@ namespace DssApplicationPoster.Areas.Administrator.Models
 
             return result;
         }
+
+        public static DataTable GetCountUsers()
+        {
+            DataTable data = new DataTable();
+            try
+            {
+                MySqlConnection conn = new MySqlConnection(Constants.ConnsStrings);
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = QueryProcedureHelper.SP_GET_COUNT_USERS;
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                MySqlDataAdapter dataAdapter = new MySqlDataAdapter(cmd);
+                dataAdapter.Fill(data);
+                conn.Close();
+
+                return data;
+            }
+            catch (MySqlException sqlEx)
+            {
+                sqlEx.Message.ToString();
+            }
+            catch (ArgumentException arEx)
+            {
+                throw new ArgumentException("Your Exception : " + arEx.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Your Exception : " + ex.Message.ToString());
+            }
+
+            return data;
+        }
+
+        public static GetCountUsers SetDataCountUsers(DataTable dataTable)
+        {
+            GetCountUsers userCount = new GetCountUsers();
+
+            try
+            {
+                if (dataTable.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        userCount.CountUsers = row["CountUsers"].Equals(DBNull.Value) == true ? 0 : Convert.ToInt32(row["CountUsers"]);
+                    }
+
+                    return userCount;
+                }
+            }
+            catch (MySqlException sqlEx)
+            {
+                sqlEx.Message.ToString();
+            }
+            catch (ArgumentException arEx)
+            {
+                throw new ArgumentException("Your Exception : " + arEx.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Your Exception : " + ex.Message.ToString());
+            }
+
+            return userCount;
+        }
+
+        public static DataTable GetCountMediaContentImage()
+        {
+            DataTable data = new DataTable();
+            try
+            {
+                MySqlConnection conn = new MySqlConnection(Constants.ConnsStrings);
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = QueryProcedureHelper.SP_GET_COUNT_MEDIA_CONTENT_IMAGE;
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                MySqlDataAdapter dataAdapter = new MySqlDataAdapter(cmd);
+                dataAdapter.Fill(data);
+                conn.Close();
+
+                return data;
+            }
+            catch (MySqlException sqlEx)
+            {
+                sqlEx.Message.ToString();
+            }
+            catch (ArgumentException arEx)
+            {
+                throw new ArgumentException("Your Exception : " + arEx.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Your Exception : " + ex.Message.ToString());
+            }
+
+            return data;
+        }
+
+        public static GetCountContentImage SetDataCountContentImage(DataTable dataTable)
+        {
+            GetCountContentImage imageContent = new GetCountContentImage();
+
+            try
+            {
+                if (dataTable.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        imageContent.CountImage = row["CountImage"].Equals(DBNull.Value) == true ? 0 : Convert.ToInt32(row["CountImage"]);
+                    }
+
+                    return imageContent;
+                }
+            }
+            catch (MySqlException sqlEx)
+            {
+                sqlEx.Message.ToString();
+            }
+            catch (ArgumentException arEx)
+            {
+                throw new ArgumentException("Your Exception : " + arEx.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Your Exception : " + ex.Message.ToString());
+            }
+
+            return imageContent;
+        }
+
+        public static DataTable GetCountMediaContentVideo()
+        {
+            DataTable data = new DataTable();
+            try
+            {
+                MySqlConnection conn = new MySqlConnection(Constants.ConnsStrings);
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = QueryProcedureHelper.SP_GET_COUNT_MEDIA_CONTENT_VIDEO;
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                MySqlDataAdapter dataAdapter = new MySqlDataAdapter(cmd);
+                dataAdapter.Fill(data);
+                conn.Close();
+
+                return data;
+            }
+            catch (MySqlException sqlEx)
+            {
+                sqlEx.Message.ToString();
+            }
+            catch (ArgumentException arEx)
+            {
+                throw new ArgumentException("Your Exception : " + arEx.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Your Exception : " + ex.Message.ToString());
+            }
+
+            return data;
+        }
+
+        public static GetCountContentVideo SetCountContentVideo(DataTable dataTable)
+        {
+            GetCountContentVideo videoContent = new GetCountContentVideo();
+
+            try
+            {
+                if (dataTable.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        videoContent.CountVideo = row["CountVideo"].Equals(DBNull.Value) == true ? 0 : Convert.ToInt32(row["CountVideo"]);
+                    }
+
+                    return videoContent;
+                }
+            }
+            catch (MySqlException sqlEx)
+            {
+                sqlEx.Message.ToString();
+            }
+            catch (ArgumentException arEx)
+            {
+                throw new ArgumentException("Your Exception : " + arEx.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Your Exception : " + ex.Message.ToString());
+            }
+
+            return videoContent;
+        }
+
+        public static DataTable GetCountMediaContentTextRunning()
+        {
+            DataTable data = new DataTable();
+            try
+            {
+                MySqlConnection conn = new MySqlConnection(Constants.ConnsStrings);
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = QueryProcedureHelper.SP_GET_COUNT_MEDIA_CONTENT_TEXT_RUN;
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                MySqlDataAdapter dataAdapter = new MySqlDataAdapter(cmd);
+                dataAdapter.Fill(data);
+                conn.Close();
+
+                return data;
+            }
+            catch (MySqlException sqlEx)
+            {
+                sqlEx.Message.ToString();
+            }
+            catch (ArgumentException arEx)
+            {
+                throw new ArgumentException("Your Exception : " + arEx.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Your Exception : " + ex.Message.ToString());
+            }
+
+            return data;
+        }
+
+        public static GetCountContentTextRun SetCountContentTextRun(DataTable dataTable)
+        {
+            GetCountContentTextRun textRun = new GetCountContentTextRun();
+
+            try
+            {
+                if (dataTable.Rows.Count > 0)
+                {
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        textRun.CountTextRunning = row["CountTextRunning"].Equals(DBNull.Value) == true ? 0 : Convert.ToInt32(row["CountTextRunning"]);
+                    }
+
+                    return textRun;
+                }
+            }
+            catch (MySqlException sqlEx)
+            {
+                sqlEx.Message.ToString();
+            }
+            catch (ArgumentException arEx)
+            {
+                throw new ArgumentException("Your Exception : " + arEx.Message.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Your Exception : " + ex.Message.ToString());
+            }
+
+            return textRun;
+        }
     }
 }

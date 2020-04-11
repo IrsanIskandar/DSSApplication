@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace DssApplicationPoster.Areas.Administrator.Models
 {
-    public class ForgotPassword
+    public class GetCountContentTextRun
     {
-        public int UserId { get; set; }
-        public int Username { get; set; }
+        public int CountTextRunning { get; set; }
     }
 }

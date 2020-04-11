@@ -8,13 +8,14 @@ namespace DssApplicationPoster.MailConfig
     public static class EmailConstant
     {
         // Setting SMTP Server
-        public static readonly string SmtpServer = "Your STMP Or POP3 SERVER"; // Recomend Use STMP Server
-        public static readonly int SmtpPort = "Your Port STMP or POP3 Mail Server."; // Data Type Integer
-        public static readonly string SmtpUsername = "Your-Email";
-        public static readonly string SmtpPassword = "Your-Password";
+        // If Error with GMail click this link https://myaccount.google.com/lesssecureapps
+        public static readonly string SmtpServer = "smtp.gmail.com"; // Recomend Use STMP Server
+        public static readonly int SmtpPort = 587; // Data Type Integer
+        public static readonly string SmtpUsername = "bkb.pfi78@gmail.com";
+        public static readonly string SmtpPassword = "bkbpfi987*";
 
         // Setting Email To
-        public static readonly string EmailAddress = "Your-Email";
+        public static readonly string EmailAddress = "bkb.pfi78@gmail.com";
         public static readonly string Username = "Your-Username";
         public static readonly string Password = "Your-Password";
 

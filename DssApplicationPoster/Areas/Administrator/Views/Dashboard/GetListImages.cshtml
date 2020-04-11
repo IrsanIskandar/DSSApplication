@@ -47,14 +47,14 @@
             @if (Model.Count() == 0)
             {
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7">
                         <p style="text-align:center; text-transform:uppercase;">No records found</p>
                     </td>
                 </tr>
             }
             else
             {
-                @foreach (var item in Model)
+                @foreach (var item in Model.AsEnumerable())
                 {
                     <tr>
                         <td>@item.NumberImage</td>
@@ -241,7 +241,7 @@
             });
         };
 
-        jQuery(window).ready(function (e) {
+        $(document).ready(function (e) {
             $('#modal-image').appendTo('body');
             $('#table-Image').DataTable();
 

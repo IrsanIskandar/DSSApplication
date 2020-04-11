@@ -1,5 +1,5 @@
 ﻿@using DssApplicationPoster.Areas.Administrator.Models
-@model IEnumerable<TextRunning>
+@model CounterMediaContent
 
 
 @{
@@ -14,10 +14,10 @@
 
         <div class="tile-stats tile-red">
             <div class="icon"><i class="entypo-users"></i></div>
-            <div class="num" data-start="0" data-end="83" data-postfix="" data-duration="1500" data-delay="0">0</div>
+            <div class="num" data-start="0" data-end="@Model.GetCountUser.CountUsers.ToString()" data-postfix="" data-duration="1500" data-delay="0">0</div>
 
             <h3>Users active</h3>
-            <p>so far in our blog, and our website.</p>
+            <p>so far our website.</p>
         </div>
 
     </div>
@@ -25,11 +25,11 @@
     <div class="col-sm-4">
 
         <div class="tile-stats tile-green">
-            <div class="icon"><i class="entypo-chart-bar"></i></div>
-            <div class="num" data-start="0" data-end="135" data-postfix="" data-duration="1500" data-delay="600">0</div>
+            <div class="icon"><i class="entypo-picture"></i></div>
+            <div class="num" data-start="0" data-end="@Model.GetCountImage.CountImage.ToString()" data-postfix="" data-duration="1500" data-delay="600">0</div>
 
-            <h3>Daily Visitors</h3>
-            <p>this is the average value.</p>
+            <h3>Total Image</h3>
+            <p>In Storege.</p>
         </div>
 
     </div>
@@ -37,11 +37,11 @@
     <div class="col-sm-4">
 
         <div class="tile-stats tile-aqua">
-            <div class="icon"><i class="entypo-mail"></i></div>
-            <div class="num" data-start="0" data-end="23" data-postfix="" data-duration="1500" data-delay="1200">0</div>
+            <div class="icon"><i class="entypo-video"></i></div>
+            <div class="num" data-start="0" data-end="@Model.GetCountVideo.CountVideo.ToString()" data-postfix="" data-duration="1500" data-delay="1200">0</div>
 
-            <h3>New Messages</h3>
-            <p>messages per day.</p>
+            <h3>Total Video</h3>
+            <p>In Storege.</p>
         </div>
 
     </div>
@@ -96,17 +96,17 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Count() == 0 || Model == null)
+                @if (Model.GetDataTextRun.Count() == 0 || Model.GetDataTextRun == null)
                 {
                     <tr>
-                        <td colspan="6">
+                        <td colspan="5">
                             <p style="text-align:center; text-transform:uppercase;">No records found</p>
                         </td>
                     </tr>
                 }
                 else
                 {
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.GetDataTextRun)
                     {
                         <tr>
                             <td>@item.NumberText</td>
@@ -177,7 +177,7 @@
                         <form method="post" role="form" name="formEditImage" id="formEditImage">
                             @Html.AntiForgeryToken()
 
-                            <input style="display:none;" id="numTxtlbl" name="numTxtlbl" readonly="readonly" />
+                            <input type="hidden" id="numTxtlbl" name="numTxtlbl" />
                             <div class="form-group">
 
                                 @(Html.DropDownList("drpIsDisplayText", new List<SelectListItem> {
@@ -217,38 +217,93 @@
 
     <script type="text/javascript">
         function SaveDataTextRun(sender) {
-            $.ajax({
-                url: '@Url.Action("LiveDisplayTextRun", "Dashboard")',
-                    method: 'POST',
-                    data: {
-                        drpIsDisplayText: $('#drpIsDisplayText').val(),
-                        numTxtlbl: $('input[name="numTxtlbl"]').val()
-                    },
-                    success: function (s) {
-                        setTimeout(function () {
-                        let opts = {
-                            "closeButton": true,
-                            "debug": false,
-                            "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
-                            "toastClass": "green",
-                            "onclick": null,
-                            "showDuration": "300",
-                            "hideDuration": "1000",
-                            "timeOut": "5000",
-                            "extendedTimeOut": "1000",
-                            "showEasing": "swing",
-                            "hideEasing": "linear",
-                            "showMethod": "fadeIn",
-                            "hideMethod": "fadeOut"
-                        };
+            let txtRunning = $('#numTxtlbl').val();
 
-                            toastr.success("records added.", "Successfully!", opts);
-                        }, 3000);
+            if (txtRunning === '' || txtRunning === null) {
+                setTimeout(function () {
+                    let optsErr = {
+                        "closeButton": true,
+                        "debug": false,
+                        "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
+                        "toastClass": "red",
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "5000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    };
+                    toastr.error("Data cannot be null.", optsErr);
+                }, 3000);
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Action("LiveDisplayTextRun", "Dashboard")',
+                        method: 'POST',
+                        data: {
+                            drpIsDisplayText: $('#drpIsDisplayText').val(),
+                            numTxtlbl: $('input[name="numTxtlbl"]').val()
+                        },
+                        success: function (s) {
+                            setTimeout(function () {
+                                let opts = {
+                                    "closeButton": true,
+                                    "debug": false,
+                                    "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
+                                    "toastClass": "green",
+                                    "onclick": null,
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "timeOut": "5000",
+                                    "extendedTimeOut": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut"
+                                };
 
-                        document.getElementById('drpIsDisplayText').selectedIndex = "0";
-                    },
-                    error: function (e) {
-                        setTimeout(function () {
+                                toastr.success("records updated.", "Successfully!", opts);
+                            }, 3000);
+
+                            document.getElementById('drpIsDisplayText').selectedIndex = "0";
+
+                        },
+                        error: function (e) {
+                            setTimeout(function () {
+                            let optsErr = {
+                                "closeButton": true,
+                                "debug": false,
+                                "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
+                                "toastClass": "red",
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "5000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            };
+                                toastr.error("records error.\n" + e.responseText, "Error Data",  optsErr);
+                            }, 3000);
+
+                            document.getElementById('drpIsDisplayText').selectedIndex = "0";
+                        }
+                });
+            }
+        };
+
+
+        $(document).ready(function () {
+            $('#btnSaveText').on('click', function () {
+                let txtRunning = $('input[name="txtRun"]').val();
+
+                if (txtRunning === '' || txtRunning === null || txtRunning === undefined) {
+                    setTimeout(function () {
                         let optsErr = {
                             "closeButton": true,
                             "debug": false,
@@ -264,48 +319,18 @@
                             "showMethod": "fadeIn",
                             "hideMethod": "fadeOut"
                         };
-                            toastr.error("records error.\n" + e.responseText, "Error Data",  optsErr);
-                        }, 3000);
-
-                        document.getElementById('drpIsDisplayText').selectedIndex = "0";
-                    }
-            });
-        };
-
-
-        $(document).ready(function () {
-            $('#btnSaveText').on('click', function () {
-                $.ajax({
-                    url: '@Url.Action("CreateTextRun", "Dashboard")',
-                    method: 'POST',
-                    data: {
-                        txtRun: $('input[name="txtRun"]').val(),
-                        drpIsDisplayFormText: $('#drpIsDisplayFormText').val(),
-                    },
-                    success: function (s) {
-                        let txtRunning = $('input[name="txtRun"]').val();
-
-                        if (txtRunning === '' || txtRunning === null || txtRunning === undefined) {
-                            setTimeout(function () {
-                                let optsErr = {
-                                    "closeButton": true,
-                                    "debug": false,
-                                    "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
-                                    "toastClass": "red",
-                                    "onclick": null,
-                                    "showDuration": "300",
-                                    "hideDuration": "1000",
-                                    "timeOut": "5000",
-                                    "extendedTimeOut": "1000",
-                                    "showEasing": "swing",
-                                    "hideEasing": "linear",
-                                    "showMethod": "fadeIn",
-                                    "hideMethod": "fadeOut"
-                                };
-                                toastr.error("records error.\n" + s.responseText, "Error Data",  optsErr);
-                            }, 3000);
-                        }
-                        else {
+                        toastr.error("Data cannot be null.", "Error Save Data.", optsErr);
+                    }, 3000);
+                }
+                else {
+                    $.ajax({
+                        url: '@Url.Action("CreateTextRun", "Dashboard")',
+                        method: 'POST',
+                        data: {
+                            txtRun: $('input[name="txtRun"]').val(),
+                            drpIsDisplayFormText: $('#drpIsDisplayFormText').val(),
+                        },
+                        success: function (s) {
                             setTimeout(function () {
                                 let opts = {
                                     "closeButton": true,
@@ -328,32 +353,32 @@
 
                             $('input[name="txtRun"]').val('');
                             document.getElementById('drpIsDisplayFormText').selectedIndex = "0";
-                        }
-                    },
-                    error: function (e) {
-                        setTimeout(function () {
-                            let optsErr = {
-                                "closeButton": true,
-                                "debug": false,
-                                "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
-                                "toastClass": "red",
-                                "onclick": null,
-                                "showDuration": "300",
-                                "hideDuration": "1000",
-                                "timeOut": "5000",
-                                "extendedTimeOut": "1000",
-                                "showEasing": "swing",
-                                "hideEasing": "linear",
-                                "showMethod": "fadeIn",
-                                "hideMethod": "fadeOut"
-                            };
-                            toastr.error("records error.\n" + e.responseText, "Error Data",  optsErr);
-                        }, 3000);
+                        },
+                        error: function (e) {
+                            setTimeout(function () {
+                                let optsErr = {
+                                    "closeButton": true,
+                                    "debug": false,
+                                    "positionClass": rtl() || public_vars.$pageContainer.hasClass('right-sidebar') ? "toast-top-left" : "toast-top-right",
+                                    "toastClass": "red",
+                                    "onclick": null,
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "timeOut": "5000",
+                                    "extendedTimeOut": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut"
+                                };
+                                toastr.error("records error.\n" + e.responseText, "Error Data", optsErr);
+                            }, 3000);
 
-                        $('input[name="txtRun"]').val('');
-                        document.getElementById('drpIsDisplayFormText').selectedIndex = "0";
-                    }
-                })
+                            $('input[name="txtRun"]').val('');
+                            document.getElementById('drpIsDisplayFormText').selectedIndex = "0";
+                        }
+                    }); 
+                }
             });
 
             $('#modal-textrun').appendTo('body');

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DssApplicationPoster.Areas.Administrator.Models;
 using DssApplicationPoster.DatabaseManagement;
@@ -32,12 +33,49 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                     TempData.Keep("ModelUserDetail");
                 }
 
-                var dataTable = MediaContentModel.GetListTextRunning();
-                List<TextRunning> result = new List<TextRunning>();
-                if (dataTable.Rows.Count > 0)
+                var dataTableDataTextRun = MediaContentModel.GetListTextRunning();
+                List<TextRunning> resultDataTextRun = new List<TextRunning>();
+                if (dataTableDataTextRun.Rows.Count > 0)
                 {
-                    result = MediaContentModel.SetDataListTextRunning(dataTable);
+                    resultDataTextRun = MediaContentModel.SetDataListTextRunning(dataTableDataTextRun);
                 }
+
+                var dataTableCountUsers = MediaContentModel.GetCountUsers();
+                GetCountUsers resultCountUser = new GetCountUsers();
+                if (dataTableCountUsers.Rows.Count > 0)
+                {
+                    resultCountUser = MediaContentModel.SetDataCountUsers(dataTableCountUsers);
+                }
+
+                var dataTableCountImage = MediaContentModel.GetCountMediaContentImage();
+                GetCountContentImage resultCountImage = new GetCountContentImage();
+                if (dataTableCountImage.Rows.Count > 0)
+                {
+                    resultCountImage = MediaContentModel.SetDataCountContentImage(dataTableCountImage);
+                }
+
+                var dataTableCountVideo = MediaContentModel.GetCountMediaContentVideo();
+                GetCountContentVideo resultCountVideo = new GetCountContentVideo();
+                if (dataTableCountVideo.Rows.Count > 0)
+                {
+                    resultCountVideo = MediaContentModel.SetCountContentVideo(dataTableCountVideo);
+                }
+
+                var dataTableCountTextRun = MediaContentModel.GetCountMediaContentTextRunning();
+                GetCountContentTextRun resultCountTextRun = new GetCountContentTextRun();
+                if (dataTableCountTextRun.Rows.Count > 0)
+                {
+                    resultCountTextRun = MediaContentModel.SetCountContentTextRun(dataTableCountTextRun);
+                }
+
+                CounterMediaContent result = new CounterMediaContent()
+                {
+                    GetDataTextRun = resultDataTextRun,
+                    GetCountUser = resultCountUser,
+                    GetCountImage = resultCountImage,
+                    GetCountVideo = resultCountVideo,
+                    GetCountTextRun = resultCountTextRun
+                };
 
                 return View(result);
             }
@@ -192,9 +230,9 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                 new
                 {
                     p_TextName = txtRun.ToUpper(),
-                    p_UserId = userCode,
-                    p_IsDisplay = drpIsDisplayFormText ?? "0",
-                    p_CreateDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+                    p_UserCode = userCode,
+                    p_IsDisplay = drpIsDisplayFormText,
+                    p_CreateDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.ttt")
                 }) as List<TextRunning>;
 
             return StatusCode(200, result);
@@ -241,10 +279,10 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
             List<ImageList> result = await MysqlHelper<ImageList>.ExecuteProcedureAsync(QueryProcedureHelper.SP_UPDATE_IMAGE,
                 new
                 {
-                    p_ImgDisplay = drpIsDisplay,
+                    p_LiveDisplayImage = drpIsDisplay,
                     p_UserCode = userCode,
                     p_UpdateDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                    p_ImgID = numImglbl
+                    p_ImageID = numImglbl
                 }) as List<ImageList>;
 
             return StatusCode(200, result);
@@ -266,10 +304,10 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
             List<VideoList> result = await MysqlHelper<VideoList>.ExecuteProcedureAsync(QueryProcedureHelper.SP_UPDATE_VIDEO,
                 new
                 {
-                    p_VidDisplay = drpIsVidDisplay,
+                    p_LiveDisplayVideo = drpIsVidDisplay,
                     p_UserCode = userCode,
                     p_UpdateDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                    p_VidID = numVidlbl
+                    p_VideoID = numVidlbl
                 }) as List<VideoList>;
 
             return StatusCode(200, result);
@@ -325,7 +363,7 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                         cmd.Connection = conn;
                         cmd.CommandText = QueryProcedureHelper.SP_UPLOAD_IMAGES;
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue(Constants.p_FileName, item.FileName);
+                        cmd.Parameters.AddWithValue(Constants.p_FileName, item.FileName.Trim());
                         cmd.Parameters.AddWithValue(Constants.p_FileSize, fileInfo.Length);
                         cmd.Parameters.AddWithValue(Constants.p_FilePath, currentPath);
                         cmd.Parameters.AddWithValue(Constants.p_UserID, userCode);
@@ -383,7 +421,7 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                         var dirInfo = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
                         string currentPath = Path.Combine(dirInfo, "VideoUploads");
                         bool folderExists = System.IO.Directory.Exists(currentPath);
-                        string fileName = file.FileName.Trim();
+                        string fileName = file.FileName;
                         string fullPath = currentPath + "\\" + fileName;
                         string userCode = ViewData["_getUserCode"].ToString();
 
@@ -403,7 +441,7 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                         cmd.Connection = conn;
                         cmd.CommandText = QueryProcedureHelper.SP_UPLOAD_VIDEOS;
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue(Constants.p_FileName, file.FileName);
+                        cmd.Parameters.AddWithValue(Constants.p_FileName, fileName);
                         cmd.Parameters.AddWithValue(Constants.p_FileSize, fileInfo.Length);
                         cmd.Parameters.AddWithValue(Constants.p_FilePath, currentPath);
                         cmd.Parameters.AddWithValue(Constants.p_UserID, userCode);

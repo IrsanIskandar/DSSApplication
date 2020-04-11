@@ -10,6 +10,7 @@ using DssApplicationPoster.SecurityService;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MySql.Data.MySqlClient;
 
@@ -47,7 +48,7 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetUserLogin(string txtPrivilegedInfo, string txtPassword)
+        public IActionResult GetUserLogin(string txtPrivilegedInfo, string txtPassword)
         {
             List<UserLoginModel> listUser = new List<UserLoginModel>();
             UserLoginModel user = new UserLoginModel();
@@ -57,8 +58,9 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                 MySqlCommand cmd = new MySqlCommand();
 
                 string regexEmail = @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z";
-                string regexUsername = @"@[a-zA-Z0-9\.]+";
+                string regexUsername = @"@[a-zA-Z0-9]+";
                 string replaceText = string.Empty;
+                string passUser = AESSecurity.EncryptPassword(txtPassword);
                 bool emailIsValid = Regex.IsMatch(txtPrivilegedInfo, regexEmail, RegexOptions.IgnoreCase);
                 bool usernameIsValid = Regex.IsMatch(txtPrivilegedInfo, regexUsername, RegexOptions.IgnoreCase);
 
@@ -67,26 +69,24 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                     replaceText = txtPrivilegedInfo;
 
                     cmd.Connection = conn;
-                    cmd.CommandText = QueryProcedureHelper.SP_CHECK_ACCOUNT_LOGIN_VERIFY;
+                    cmd.CommandText = QueryProcedureHelper.SP_CHECK_ACCOUNT_LOGIN_VERIFY_EMAIL_ADDRESS;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue(Constants.p_Username, txtPrivilegedInfo.Equals(""));
                     cmd.Parameters.AddWithValue(Constants.p_EmailAddress, replaceText);
-                    cmd.Parameters.AddWithValue(Constants.p_Password, AESSecurity.EncryptPassword(txtPassword));
+                    cmd.Parameters.AddWithValue(Constants.p_Password, passUser);
                     conn.Open();
                 }
                 else if (usernameIsValid == true)
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = QueryProcedureHelper.SP_CHECK_ACCOUNT_LOGIN_VERIFY;
+                    cmd.CommandText = QueryProcedureHelper.SP_CHECK_ACCOUNT_LOGIN_VERIFY_USERNAME;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue(Constants.p_Username, txtPrivilegedInfo);
-                    cmd.Parameters.AddWithValue(Constants.p_EmailAddress, replaceText.Equals(string.Empty));
-                    cmd.Parameters.AddWithValue(Constants.p_Password, AESSecurity.EncryptPassword(txtPassword));
+                    cmd.Parameters.AddWithValue(Constants.p_Password, passUser);
                     conn.Open();
                 }
                 else
                 {
-                    throw new Exception("Data is null.");
+                    throw new Exception("Data is not match.");
                 }
                 
 
@@ -108,9 +108,9 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                                 cmd2.Connection = conn2;
                                 cmd2.CommandText = QueryProcedureHelper.SP_USER_LOGIN;
                                 cmd2.CommandType = System.Data.CommandType.StoredProcedure;
-                                cmd2.Parameters.AddWithValue(Constants.p_Username, txtPrivilegedInfo.Equals(""));
+                                cmd2.Parameters.AddWithValue(Constants.p_Username, txtPrivilegedInfo.Equals(string.Empty));
                                 cmd2.Parameters.AddWithValue(Constants.p_EmailAddress, replaceText);
-                                cmd2.Parameters.AddWithValue(Constants.p_Password, AESSecurity.EncryptPassword(txtPassword));
+                                cmd2.Parameters.AddWithValue(Constants.p_Password, passUser);
                                 conn2.Open();
                                 txtPrivilegedInfo = string.Empty;
                             }
@@ -120,8 +120,8 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                                 cmd2.CommandText = QueryProcedureHelper.SP_USER_LOGIN;
                                 cmd2.CommandType = System.Data.CommandType.StoredProcedure;
                                 cmd2.Parameters.AddWithValue(Constants.p_Username, txtPrivilegedInfo);
-                                cmd2.Parameters.AddWithValue(Constants.p_EmailAddress, replaceText.Equals(""));
-                                cmd2.Parameters.AddWithValue(Constants.p_Password, AESSecurity.EncryptPassword(txtPassword));
+                                cmd2.Parameters.AddWithValue(Constants.p_EmailAddress, replaceText.Equals(string.Empty));
+                                cmd2.Parameters.AddWithValue(Constants.p_Password, passUser);
                                 conn2.Open();
                             }
                             else
@@ -163,7 +163,7 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                         }
                     }
 
-                    if (user.UserName != null || user.Email != null && user.Password != null)
+                    if (user.UserName == txtPrivilegedInfo && user.Password == passUser)
                     {
                         string createPrivilegedAccess = AESSecurity.EncryptPassword(user.UserID.ToString()) + "_" + AESSecurity.EncryptPassword(user.UserName) + "_" + AESSecurity.EncryptPassword(user.Password);
 
@@ -171,12 +171,30 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                         cookieOptions.HttpOnly = false;
                         cookieOptions.Expires = DateTime.Now.AddSeconds(180);
                         Response.Cookies.Append("privilege_access", createPrivilegedAccess, cookieOptions);
+
+                        var modelObj = Newtonsoft.Json.JsonConvert.SerializeObject(user);
+                        TempData["ModelUserDetail"] = modelObj;
+
+                        return RedirectToAction("Home", "Dashboard");
                     }
+                    else if (user.Email == replaceText && user.Password == passUser)
+                    {
+                        string createPrivilegedAccess = AESSecurity.EncryptPassword(user.UserID.ToString()) + "_" + AESSecurity.EncryptPassword(user.UserName) + "_" + AESSecurity.EncryptPassword(user.Password);
 
-                    var modelObj = Newtonsoft.Json.JsonConvert.SerializeObject(user);
-                    TempData["ModelUserDetail"] = modelObj;
+                        CookieOptions cookieOptions = new CookieOptions();
+                        cookieOptions.HttpOnly = false;
+                        cookieOptions.Expires = DateTime.Now.AddSeconds(180);
+                        Response.Cookies.Append("privilege_access", createPrivilegedAccess, cookieOptions);
 
-                    return RedirectToAction("Home", "Dashboard");
+                        var modelObj = Newtonsoft.Json.JsonConvert.SerializeObject(user);
+                        TempData["ModelUserDetail"] = modelObj;
+
+                        return RedirectToAction("Home", "Dashboard");
+                    }
+                    else
+                    {
+                        throw new Exception("Username, Email or Password is wrong, please check again.");
+                    }
                 }
                 else if (Convert.ToInt32(checkAccount) == 0)
                 {
@@ -201,10 +219,10 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("Check your data.");
+                throw new Exception("Check your data. " + ex.Message);
             }
 
-            return Ok();
+            return StatusCode(200);
         }
 
         [HttpGet]
@@ -310,7 +328,7 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                             forgotPassword = new ForgotPassword()
                             {
                                 UserId = reader["UserId"].Equals(DBNull.Value) == true ? 0 : Convert.ToInt32(reader["UserId"]),
-                                ForgotPasswod = reader["ForgotPasswod"].Equals(DBNull.Value) == true ? 0 : Convert.ToInt32(reader["ForgotPasswod"])
+                                Username = reader["Username"].Equals(DBNull.Value) == true ? 0 : Convert.ToInt32(reader["Username"])
                             };
                         }
                     }
@@ -320,7 +338,7 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                 if (conn.State == System.Data.ConnectionState.Open)
                     conn.Close();
 
-                if (forgotPassword.UserId == 0 && forgotPassword.ForgotPasswod == 0)
+                if (forgotPassword.UserId == 0 && forgotPassword.Username == 0)
                 {
                     throw new Exception("Username and Password does not exists.");
                 }
@@ -396,7 +414,7 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                     cmd.Connection = conn;
                     cmd.CommandText = QueryProcedureHelper.SP_CREATE_NEW_PASSWORD;
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue(Constants.p_Password, AESSecurity.EncryptPassword(password));
+                    cmd.Parameters.AddWithValue(Constants.p_NewPassword, AESSecurity.EncryptPassword(password));
                     cmd.Parameters.AddWithValue(Constants.p_UserID, forgotPassword);
                     conn.Open();
 
@@ -404,7 +422,7 @@ namespace DssApplicationPoster.Areas.Administrator.Controllers
                     if (conn.State == System.Data.ConnectionState.Open)
                         conn.Close();
 
-                    return Ok();
+                    return StatusCode(200);
                 }
             }
             catch (MySqlException MysqlEx)

@@ -1,9 +1,9 @@
-﻿{
+{
   "iisSettings": {
-    "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:49975",
+      "applicationUrl": "http://localhost:46969",
       "sslPort": 0
     }
   },
@@ -18,26 +18,26 @@
     "DssApplicationPoster": {
       "commandName": "DevelopLocal",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:6969",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "http://localhost:6969"
     },
     "DssApplicationPosterUAT": {
       "commandName": "UatTest",
       "launchBrowser": true,
-      "applicationUrl": "https://your-domain-uat.com",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Uat"
-      }
+      },
+      "applicationUrl": "https://your-domain-uat.com"
     },
     "DssApplicationPosterLive": {
       "commandName": "LiveProduction",
       "launchBrowser": true,
-      "applicationUrl": "https://your-domain-prod.com",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
-      }
+      },
+      "applicationUrl": "https://your-domain-prod.com"
     }
   }
 }
