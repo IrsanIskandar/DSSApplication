@@ -16,6 +16,8 @@
   <ItemGroup>
     <Folder Include="Areas\Administrator\Data\" />
     <Folder Include="logs\" />
+    <Folder Include="wwwroot\ImageUploads\" />
+    <Folder Include="wwwroot\VideoUploads\" />
   </ItemGroup>
 
   <ItemGroup>

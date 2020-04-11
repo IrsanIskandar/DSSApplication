@@ -13,4 +13,13 @@ namespace DssApplicationPoster.Areas.Administrator.Models
         public List<VideoList> GetVideoLists { get; set; }
         public List<TextRunning> GetTextRunnings { get; set; }
     }
+
+    public class CounterMediaContent
+    {
+        public List<TextRunning> GetDataTextRun { get; set; }
+        public GetCountUsers GetCountUser { get; set; }
+        public GetCountContentImage GetCountImage { get; set; }
+        public GetCountContentVideo GetCountVideo { get; set; }
+        public GetCountContentTextRun GetCountTextRun { get; set; }
+    }
 }

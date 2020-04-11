@@ -10,10 +10,11 @@ namespace DssApplicationPoster.DatabaseManagement
         public static string Authority { get; set; }
 
         // Query Parameter
-        public static readonly string p_UserID = "@p_UserId";
+        public static readonly string p_UserID = "@p_UserCode";
         public static readonly string p_Username = "@p_Username";
         public static readonly string p_EmailAddress = "@p_EmailAddress";
         public static readonly string p_Password = "@p_Password";
+        public static readonly string p_NewPassword = "@p_NewPassword";
         public static readonly string p_IsVerified = "@p_IsVerified";
         public static readonly string p_Verification = "@p_Verification";
         public static readonly string p_FileName = "@p_FileName";
